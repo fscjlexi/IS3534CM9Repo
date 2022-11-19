@@ -1,20 +1,23 @@
 #!/usr/bin/env python3
 #networkFileRW.py
-#Pamela Brauda
-#Thursday, March 3, 2022
+#Lexi Rossow
+#Thursday, November 11, 2022
 #Update routers and switches;
 #read equipment from a file, write updates & errors to file
 
+#file constants 
+#Read 
+EQUIPR = "equip_r.txt"
+EQUIPS = "equip_s.txt"
+#Write
+OUTPUT_UPDATED = "updated.txt"
+OUTPUT_INVALID = "invalid.txt"
+
 ##---->>>> Use a try/except clause to import the JSON module
-
-
-
-##---->>>> Create file constants for the file names; file constants can be reused
-##         There are 2 files to read this program: equip_r.txt and equip_s.txt
-##         There are 2 files to write in this program: updated.txt and errors.txt
-      
-
-
+try:
+    import json
+except ImportError:
+    print("An import error has occurred.")
 
 
 #prompt constants
@@ -58,28 +61,24 @@ def getValidIP(invalidIPCount, invalidIPAddresses):
                 #don't need to return invalidIPAddresses list - it's an object
         
 def main():
-
-    ##---->>>> open files here
-
-
-
-    
+     
     #dictionaries
-    ##---->>>> read the routers and addresses into the router dictionary
-
+    ##---->>>> read the routers and addresses into the router dictionary  
     routers = {}
+    with open(EQUIPR, "r") as routerfile: 
+        routers = json.load(routerfile)
 
 
     ##---->>>> read the switches and addresses into the switches dictionary
-
     switches = {}
-
+    with open(EQUIPS, "r") as switchfile:
+        switches = json.load(switchfile)
 
     #the updated dictionary holds the device name and new ip address
     updated = {}
 
     #list of bad addresses entered by the user
-    invalidIPAddresses = []
+    invalidIPAddresses = {}
 
     #accumulator variables
     devicesUpdatedCount = 0
@@ -91,6 +90,9 @@ def main():
 
     print("Network Equipment Inventory\n")
     print("\tequipment name\tIP address")
+    print(routers)
+    print(switches)
+    
     for router, ipa in routers.items(): 
         print("\t" + router + "\t\t" + ipa)
     for switch, ipa in switches.items():
@@ -113,8 +115,7 @@ def main():
         if 'r' in device:
             #modify the value associated with the key
             routers[device] = ipAddress 
-            #print("routers", routers)
-            
+            print("routers", routers)
         else:
             switches[device] = ipAddress
 
@@ -131,13 +132,14 @@ def main():
     print("Number of devices updated:", devicesUpdatedCount)
 
     ##---->>>> write the updated equipment dictionary to a file
-
+    OUTPUT_UPDATED.write(updated) 
     
     print("Updated equipment written to file 'updated.txt'")
     print()
     print("\nNumber of invalid addresses attempted:", invalidIPCount)
 
-    ##---->>>> write the list of invalid addresses to a file
+    ##---->>>> write the list of invalid addresses to a file 
+    OUTPUT_INVALID.write(invalidIPAddresses)
     
 
     print("List of invalid addresses written to file 'errors.txt'")
@@ -145,7 +147,6 @@ def main():
 #top-level scope check
 if __name__ == "__main__":
     main()
-
 
 
 
